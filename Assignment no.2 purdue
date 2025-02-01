@@ -1,0 +1,69 @@
+# Load required libraries
+library(ggplot2)
+library(datasets)
+
+# 1. Using the iris dataset
+
+# Load the iris dataset
+data(iris)
+
+# a. Make a histogram of the variable Sepal.Width
+ggplot(iris, aes(x = Sepal.Width)) +
+  geom_histogram(binwidth = 0.1, fill = "skyblue", color = "black", alpha = 0.7) +
+  labs(title = "Histogram of Sepal Width", x = "Sepal Width (cm)", y = "Frequency")
+
+# b. Mean vs Median (Expected higher or lower?)
+mean_sepal_width <- mean(iris$Sepal.Width)
+median_sepal_width <- median(iris$Sepal.Width)
+mean_sepal_width
+median_sepal_width
+
+# Based on the histogram, you'd typically compare the skewness to answer if the mean or median is higher.
+# If the histogram is skewed right, the mean is likely to be higher than the median.
+
+# c. Only 27% of the flowers have a Sepal.Width higher than
+quantile(iris$Sepal.Width, 0.73)
+
+# d. Make scatterplots of each pair of numerical variables (6 pairs)
+pairs(iris[, 1:4], main = "Scatterplot Matrix of Iris Numerical Variables")
+
+# e. Based on the scatterplots, identify strongest and weakest relationships
+# Look at correlation coefficients and scatterplot patterns visually
+
+# 2. Using the PlantGrowth dataset
+
+# Create the PlantGrowth dataset
+weight <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14, 
+            4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69, 
+            6.31, 5.12, 5.54, 5.50, 5.37, 5.29, 4.92, 6.15, 5.80, 5.26)
+group <- rep(c("ctrl", "trt1", "trt2"), each = 10)
+
+PlantGrowth <- data.frame(weight = weight, group = group)
+
+# a. Make a histogram of the variable weight with breakpoints at every 0.3 units, starting at 3.3
+ggplot(PlantGrowth, aes(x = weight)) +
+  geom_histogram(binwidth = 0.3, fill = "orange", color = "black", alpha = 0.7) +
+  labs(title = "Histogram of Plant Weight", x = "Weight (kg)", y = "Frequency")
+
+# b. Make boxplots of weight separated by group
+ggplot(PlantGrowth, aes(x = group, y = weight, fill = group)) +
+  geom_boxplot() +
+  labs(title = "Boxplots of Weight by Group", x = "Group", y = "Weight (kg)")
+
+# c. Approximate percentage of "trt1" weights below minimum "trt2" weight
+min_trt2 <- min(PlantGrowth$weight[PlantGrowth$group == "trt2"])
+trt1_below_min_trt2 <- sum(PlantGrowth$weight[PlantGrowth$group == "trt1"] < min_trt2) / 
+  length(PlantGrowth$weight[PlantGrowth$group == "trt1"]) * 100
+trt1_below_min_trt2
+
+# d. Exact percentage of "trt1" weights below the minimum "trt2" weight
+trt1_below_min_trt2_exact <- sum(PlantGrowth$weight[PlantGrowth$group == "trt1"] < min_trt2) / 
+  sum(PlantGrowth$group == "trt1") * 100
+trt1_below_min_trt2_exact
+
+# e. Barplot of the variable group only for plants with weight above 5.5, with a colorful palette
+PlantGrowth_above_5_5 <- PlantGrowth[PlantGrowth$weight > 5.5, ]
+ggplot(PlantGrowth_above_5_5, aes(x = group, fill = group)) +
+  geom_bar() +
+  scale_fill_brewer(palette = "Set3") +
+  labs(title = "Barplot of Groups for Plants with Weight Above 5.5 kg", x = "Group", y = "Count")
